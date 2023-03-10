@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Todo List App</title>
+  <title>Crimson Eagle Todo List App</title>
 
   <!-- Font: Montserrat -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,14 +27,14 @@
 
     <h2 class="task-list-title">My Lists</h2>
 
-    <ul class="task-list">
+    <ul class="task-list" data-lists>
       <li class="list-name active-list">Personal</li>
       <li class="list-name">Work</li>
       <li class="list-name">Groceries</li>
     </ul>
 
-    <form action="">
-      <input type="text" class="new list" placeholder="new list name" aria-label="new list name" />
+    <form action="" data-list-form>
+      <input type="text" class="new list" placeholder="new list name" aria-label="new list name" data-list-input/>
       <button class="btn create" aria-label="create new list">+</button>
     </form>
 
@@ -73,7 +73,7 @@
 
       <div class="delete-task">
         <button class="btn delete">Clear Completed Tasks</button>
-        <button class="btn delete">Delete List</button>
+        <button class="btn delete" data-delete-list>Delete List</button>
       </div>
 
     </div>
