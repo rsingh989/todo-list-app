@@ -2,6 +2,16 @@ const listsContainer = document.querySelector('[data-lists]');
 const listForm = document.querySelector('[data-list-form]');
 const listInput = document.querySelector('[data-list-input]');
 const deleteList = document.querySelector('[data-delete-list]');
+const todoListContainer = document.querySelector('[data-todo-list]');
+const todoListTitle = document.querySelector('[data-todo-title]');
+const todoListCount = document.querySelector('[data-task-count]');
+const taskContainer = document.querySelector('[data-tasks]');
+const taskTemplate = document.getElementById('task-template');
+const taskForm = document.querySelector('[data-task]');
+const taskInput = document.querySelector('[data-task-input]');
+const clearCompletedTasks = document.querySelector(
+  '[data-completed-tasks]'
+);
 
 //Defining local storage for lists
 const LOCAL_STORAGE_LIST_KEY = 'task.lists';
@@ -20,6 +30,32 @@ listsContainer.addEventListener('click', (event) => {
     selectedListId = event.target.dataset.listId;
     saveAndRenderList();
   }
+});
+
+//Updating the task count in selected list
+taskContainer.addEventListener('click', (event) => {
+  if (event.target.tagName.toLowerCase() === 'input') {
+    const selectedList = lists.find(
+      (list) => list.id === selectedListId
+    );
+    const selectedTask = selectedList.tasks.find(
+      (task) => task.id === event.target.id
+    );
+    selectedTask.complete = event.target.checked;
+    saveList();
+    renderTaskCount(selectedList);
+  }
+});
+
+//Deleting completed tasks from the selected list
+clearCompletedTasks.addEventListener('click', (event) => {
+  const selectedList = lists.find(
+    (list) => list.id === selectedListId
+  );
+  selectedList.tasks = selectedList.tasks.filter(
+    (task) => !task.complete
+  );
+  saveAndRenderList();
 });
 
 //Deleting currently active list
@@ -43,6 +79,23 @@ listForm.addEventListener('submit', (event) => {
   }
 });
 
+//Adding new task to selected list
+taskForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const taskName = taskInput.value;
+  if (taskName == null || taskName === '') {
+    return;
+  } else {
+    const task = createTask(taskName);
+    taskInput.value = null;
+    const selectedList = lists.find(
+      (list) => list.id === selectedListId
+    );
+    selectedList.tasks.push(task);
+    saveAndRenderList();
+  }
+});
+
 //Creating a new list in 'My Lists'
 function createList(name) {
   return {
@@ -52,10 +105,19 @@ function createList(name) {
   };
 }
 
+//Creating a new task in the selected list
+function createTask(name) {
+  return {
+    id: Date.now().toString(),
+    name: name,
+    complete: false,
+  };
+}
+
 //Render the lists saved to local storage
 function saveAndRenderList() {
   saveList();
-  renderList();
+  renderLists();
 }
 
 //Saving the list and list selected state in 'My Lists' to local storage
@@ -67,9 +129,53 @@ function saveList() {
   );
 }
 
+//(Add a comment here)
+function renderLists() {
+  clearElement(listsContainer);
+  renderList();
+
+  const selectedList = lists.find(
+    (list) => list.id === selectedListId
+  );
+  if (selectedListId == null) {
+    todoListContainer.style.display = 'none';
+  } else {
+    todoListContainer.style.display = '';
+    todoListTitle.innerText = selectedList.name;
+    renderTaskCount(selectedList);
+    clearElement(taskContainer);
+    renderTasks(selectedList);
+  }
+}
+
+//Render the tasks in selected list
+function renderTasks(selectedList) {
+  selectedList.tasks.forEach((task) => {
+    const taskElement = document.importNode(
+      taskTemplate.content,
+      true
+    );
+    const checkbox = taskElement.querySelector('input');
+    checkbox.id = task.id;
+    checkbox.checked = task.complete;
+    const label = taskElement.querySelector('label');
+    label.htmlFor = task.id;
+    label.append(task.name);
+    taskContainer.appendChild(taskElement);
+  });
+}
+
+//Render the task count in selected list
+function renderTaskCount(selectedList) {
+  const incompleteTaskCount = selectedList.tasks.filter(
+    (task) => !task.complete
+  ).length;
+  const taskString = incompleteTaskCount === 1 ? 'task' : 'tasks';
+  todoListCount.innerText = `${incompleteTaskCount} ${taskString} remaining`;
+}
+
 //Render the lists in 'My Lists'
 function renderList() {
-  clearElement(listsContainer);
   lists.forEach((list) => {
     const listElement = document.createElement('li');
     listElement.dataset.listId = list.id;
@@ -89,4 +195,4 @@ function clearElement(element) {
   }
 }
 
-renderList();
+renderLists();
