@@ -129,7 +129,7 @@ function saveList() {
   );
 }
 
-//(Add a comment here)
+//Render the lists and todos
 function renderLists() {
   clearElement(listsContainer);
   renderList();
