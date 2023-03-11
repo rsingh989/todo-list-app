@@ -226,10 +226,10 @@ form {
 .delete-task {
   display: flex;
   justify-content: space-evenly;
-  position: absolute;
+  position: relative;
   width: 100%;
   left: 0;
-  bottom: -50px;
+  bottom: -100px;
   color: var(--clr-light);
 }
 
