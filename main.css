@@ -225,7 +225,7 @@ form {
 
 .delete-task {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   position: relative;
   width: 100%;
   left: 0;
